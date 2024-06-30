@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Development: Permissions Guide</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #569cd6;
+        }
+
+        p {
+            color: #d4d4d4;
+        }
+
+        code {
+            background-color: #252526;
+            border-radius: 4px;
+            padding: 2px 4px;
+            color: #dcdcaa;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .type {
+            color: #4ec9b0;
+        }
+
+        .property {
+            color: #9cdcfe;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Discord Bot Development: Permissions Guide</h1>
+    <h2>Overview</h2>
+    <p>This guide provides a detailed explanation of the permission flags available for Discord bots. These permission flags are exported as <code class="type">BigInt</code> values. Avoid converting them to numbers, as this may cause issues. Instead, use BigInts directly or use modules that support them.</p>
+
+    <h2>Permission Flags</h2>
+    <p>Each permission flag allows specific actions within Discord servers. Below is a list of available permission flags and their descriptions:</p>
+
+    <h3>Channel-Specific Permissions</h3>
+    <p><code class="keyword">readonly</code> <code class="property">CreateInstantInvite</code>: <code class="type">bigint</code>; <span class="comment">// Allows creation of instant invites. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageChannels</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of channels. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">AddReactions</code>: <code class="type">bigint</code>; <span class="comment">// Allows adding reactions to messages. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">Stream</code>: <code class="type">bigint</code>; <span class="comment">// Allows the user to go live. Applies to: Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ViewChannel</code>: <code class="type">bigint</code>; <span class="comment">// Allows guild members to view a channel, read messages in text channels, and join voice channels. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">SendMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending messages in a channel and creating threads in a forum (does not allow sending messages in threads). Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">SendTTSMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending of `/tts` messages. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows deletion of other users' messages. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">EmbedLinks</code>: <code class="type">bigint</code>; <span class="comment">// Links sent by users with this permission will be auto-embedded. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">AttachFiles</code>: <code class="type">bigint</code>; <span class="comment">// Allows uploading images and files. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ReadMessageHistory</code>: <code class="type">bigint</code>; <span class="comment">// Allows reading of message history. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">MentionEveryone</code>: <code class="type">bigint</code>; <span class="comment">// Allows using the `@everyone` tag to notify all users in a channel, and the `@here` tag to notify all online users in a channel. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">UseExternalEmojis</code>: <code class="type">bigint</code>; <span class="comment">// Allows using custom emojis from other servers. Applies to: Text, Voice, Stage channels</span></p>
+
+    <h3>Guild-Wide Permissions</h3>
+    <p><code class="keyword">readonly</code> <code class="property">KickMembers</code>: <code class="type">bigint</code>; <span class="comment">// Allows kicking members.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">BanMembers</code>: <code class="type">bigint</code>; <span class="comment">// Allows banning members.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">Administrator</code>: <code class="type">bigint</code>; <span class="comment">// Allows all permissions and bypasses channel permission overwrites.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageGuild</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of the guild.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ViewAuditLog</code>: <code class="type">bigint</code>; <span class="comment">// Allows viewing of audit logs.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">PrioritySpeaker</code>: <code class="type">bigint</code>; <span class="comment">// Allows using priority speaker in a voice channel. Applies to: Voice channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ViewGuildInsights</code>: <code class="type">bigint</code>; <span class="comment">// Allows viewing guild insights.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageRoles</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of roles. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageWebhooks</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of webhooks. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageGuildExpressions</code>: <code class="type">bigint</code>; <span class="comment">// Allows editing and deleting emojis, stickers, and soundboard sounds created by all users.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">UseApplicationCommands</code>: <code class="type">bigint</code>; <span class="comment">// Allows using application commands, including slash commands and context menu commands. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageEvents</code>: <code class="type">bigint</code>; <span class="comment">// Allows editing and deleting scheduled events created by all users. Applies to: Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ManageThreads</code>: <code class="type">bigint</code>; <span class="comment">// Allows deleting and archiving threads, and viewing all private threads. Applies to: Text channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">CreatePublicThreads</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating public and announcement threads. Applies to: Text channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">CreatePrivateThreads</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating private threads. Applies to: Text channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ModerateMembers</code>: <code class="type">bigint</code>; <span class="comment">// Allows timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">ViewCreatorMonetizationAnalytics</code>: <code class="type">bigint</code>; <span class="comment">// Allows viewing role subscription insights.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">UseSoundboard</code>: <code class="type">bigint</code>; <span class="comment">// Allows using soundboard in a voice channel. Applies to: Voice channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">CreateGuildExpressions</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating emojis, stickers, and soundboard sounds, and editing and deleting those created by the current user.</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">CreateEvents</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating scheduled events, and editing and deleting those created by the current user. Applies to: Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">UseExternalSounds</code>: <code class="type">bigint</code>; <span class="comment">// Allows using custom soundboard sounds from other servers. Applies to: Voice channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">SendVoiceMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending voice messages. Applies to: Text, Voice, Stage channels</span></p>
+    <p><code class="keyword">readonly</code> <code class="property">SendPolls</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending polls. Applies to: Text, Voice, Stage channels</span></p>
+
+    <h2>Rate Limits</h2>
+    <p>Discord enforces rate limits to prevent abuse of the API. If you exceed a rate limit, you will receive a response containing the following information:</p>
+    <p><code class="keyword">interface</code> <code class="type">RESTRateLimit</code> {<br>
+        &emsp;<code class="property">code?:</code> <code class="type">number</code>;<br>
+        &emsp;<code class="property">global:</code> <code class="type">boolean</code>;<br>
+        &emsp;<code class="property">message:</code> <code class="type">string</code>;<br>
+        &emsp;<code class="property">retry_after:</code> <code class="type">number</code>;<br>
+    }</p>
+
+    <h2>Error Handling</h2>
+    <p>When an error occurs, the API returns a JSON response containing details about the error. The structure of this response is as follows:</p>
+    <p><code class="keyword">interface</code> <code class="type">RESTError</code> {<br>
+        &emsp;<code class="property">code:</code> <code class="type">number</code>;<br>
+        &emsp;<code class="property">message:</code> <code class="type">string</code>;<br>
+        &emsp;<code class="property">errors?:</code> <code class="type">RESTErrorData</code>;<br>
+    }</p>
+</body>
+
+</html>
