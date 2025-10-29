@@ -4,120 +4,670 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Bot Development: Permissions Guide</title>
+    <title>Discord.js Permissions Guide (v14+)</title>
     <style>
+        :root {
+            color-scheme: dark;
+            font-size: 16px;
+            --bg: #05060a;
+            --bg-panel: rgba(17, 25, 40, 0.82);
+            --text-primary: #f4f7ff;
+            --text-muted: #9aa6c9;
+            --accent: #5865f2;
+            --accent-soft: rgba(88, 101, 242, 0.14);
+            --border: rgba(255, 255, 255, 0.05);
+            --shadow: 0 35px 80px -45px rgba(11, 16, 27, 0.82);
+            --radius: 18px;
+            --code-bg: rgba(9, 14, 26, 0.88);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            font-family: 'Consolas', 'Courier New', monospace;
-            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
+            line-height: 1.65;
+            position: relative;
         }
 
-        h1, h2, h3 {
-            color: #569cd6;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(120% 120% at 12% 0%, rgba(88, 101, 242, 0.32) 0%, transparent 55%),
+                radial-gradient(120% 120% at 88% 2%, rgba(0, 221, 235, 0.22) 0%, transparent 58%),
+                radial-gradient(120% 120% at 50% 90%, rgba(168, 85, 247, 0.18) 0%, transparent 58%);
+            filter: blur(75px);
+            opacity: 0.9;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        p {
-            color: #d4d4d4;
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 72px 24px 96px;
+        }
+
+        header.hero {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 40px clamp(24px, 4vw, 48px);
+            background: linear-gradient(135deg, rgba(17, 25, 40, 0.93), rgba(17, 25, 40, 0.74));
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .hero .eyebrow {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--text-muted);
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2.4rem, 4vw, 3.2rem);
+            font-weight: 700;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 680px;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .hero-actions code {
+            background: var(--code-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(88, 101, 242, 0.24);
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .hero-actions a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: var(--accent);
+            color: #ffffff;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hero-actions a:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -18px rgba(88, 101, 242, 0.9);
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.85rem;
+            border: 1px solid rgba(88, 101, 242, 0.2);
+        }
+
+        section {
+            margin-top: 56px;
+        }
+
+        section h2 {
+            margin: 0 0 18px;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+        }
+
+        section p {
+            margin: 0 0 18px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--bg-panel);
+            border-radius: var(--radius);
+            padding: 22px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 1.15rem;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--text-muted);
         }
 
         code {
-            background-color: #252526;
-            border-radius: 4px;
-            padding: 2px 4px;
-            color: #dcdcaa;
+            font-family: "JetBrains Mono", "Fira Code", "Consolas", "SFMono-Regular", ui-monospace, monospace;
+            font-size: 0.92rem;
         }
 
-        .comment {
-            color: #6a9955;
+        pre {
+            margin: 0;
+            background: var(--code-bg);
+            border-radius: var(--radius);
+            border: 1px solid rgba(88, 101, 242, 0.22);
+            padding: 22px;
+            overflow-x: auto;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
-        .string {
-            color: #ce9178;
+        pre code {
+            display: block;
+            white-space: pre;
         }
 
-        .number {
-            color: #b5cea8;
+        .muted {
+            color: var(--text-muted);
         }
 
-        .keyword {
-            color: #569cd6;
+        .table-wrapper {
+            margin-top: 22px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            background: var(--bg-panel);
         }
 
-        .type {
-            color: #4ec9b0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 320px;
         }
 
-        .property {
-            color: #9cdcfe;
+        thead th {
+            text-align: left;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+            background: rgba(88, 101, 242, 0.06);
+            padding: 16px 18px;
+        }
+
+        tbody td,
+        tbody th {
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        tbody td {
+            color: var(--text-primary);
+            vertical-align: top;
+        }
+
+        tbody td:last-child {
+            color: var(--text-muted);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .group-row th {
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(88, 101, 242, 0.08);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 64px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 640px) {
+            main {
+                padding: 48px 18px 72px;
+            }
+
+            header.hero {
+                padding: 32px 24px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero-actions a,
+            .hero-actions code {
+                width: 100%;
+            }
+
+            thead {
+                display: none;
+            }
+
+            table,
+            tbody,
+            tr,
+            td,
+            th {
+                display: block;
+            }
+
+            tbody tr {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            tbody td {
+                padding: 12px 18px;
+            }
+
+            tbody td::before {
+                content: attr(data-label);
+                display: block;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.14em;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+            }
+
+            .group-row {
+                margin-top: 12px;
+            }
+
+            .group-row th {
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+            }
         }
     </style>
 </head>
 
 <body>
-    <h1>Discord Bot Development: Permissions Guide</h1>
-    <h2>Overview</h2>
-    <p>This guide provides a detailed explanation of the permission flags available for Discord bots. These permission flags are exported as <code class="type">BigInt</code> values. Avoid converting them to numbers, as this may cause issues. Instead, use BigInts directly or use modules that support them.</p>
+    <main>
+        <header class="hero">
+            <span class="eyebrow">discord.js v14 &middot; Gateway v10</span>
+            <h1>Permissions Guide for Bot Builders</h1>
+            <p>Updated notes for the BigInt-based <code>PermissionsBitField</code>, common Discord flags, and practical
+                checks so you can release slash commands without guesswork.</p>
+            <div class="hero-actions">
+                <code>npm install discord.js@latest</code>
+                <a href="https://discord.com/developers/docs/topics/permissions" target="_blank"
+                    rel="noopener noreferrer">Official permissions docs -&gt;</a>
+            </div>
+            <div class="badge-row">
+                <span class="badge">PermissionsBitField</span>
+                <span class="badge">BigInt safe</span>
+                <span class="badge">Last updated 2024</span>
+            </div>
+        </header>
 
-    <h2>Permission Flags</h2>
-    <p>Each permission flag allows specific actions within Discord servers. Below is a list of available permission flags and their descriptions:</p>
+        <section class="quickstart">
+            <h2>Working with permissions in discord.js 14</h2>
+            <p class="muted">Use the helpers discord.js exposes instead of juggling raw numbers. Everything below sticks
+                to <code>bigint</code> so you avoid precision issues.</p>
+            <div class="card-grid">
+                <article class="card">
+                    <h3>Use PermissionsBitField</h3>
+                    <p>Flags live under <code>PermissionsBitField.Flags</code>. Mix strings, arrays, or raw
+                        <code>bigint</code> values when building instances.</p>
+                </article>
+                <article class="card">
+                    <h3>Stay in BigInt land</h3>
+                    <p>Permission numbers exceed the 53-bit safe integer limit. Persist them as strings if you need to
+                        store them, and cast back with <code>BigInt()</code>.</p>
+                </article>
+                <article class="card">
+                    <h3>Validate both sides</h3>
+                    <p>Set <code>defaultMemberPermissions</code> during command registration, then confirm the invoking
+                        member via <code>interaction.memberPermissions?.has()</code>.</p>
+                </article>
+            </div>
+            <pre><code class="language-ts">import { Client, GatewayIntentBits, PermissionsBitField } from 'discord.js';
 
-    <h3>Channel-Specific Permissions</h3>
-    <p><code class="keyword">readonly</code> <code class="property">CreateInstantInvite</code>: <code class="type">bigint</code>; <span class="comment">// Allows creation of instant invites. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageChannels</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of channels. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">AddReactions</code>: <code class="type">bigint</code>; <span class="comment">// Allows adding reactions to messages. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">Stream</code>: <code class="type">bigint</code>; <span class="comment">// Allows the user to go live. Applies to: Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ViewChannel</code>: <code class="type">bigint</code>; <span class="comment">// Allows guild members to view a channel, read messages in text channels, and join voice channels. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">SendMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending messages in a channel and creating threads in a forum (does not allow sending messages in threads). Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">SendTTSMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending of `/tts` messages. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows deletion of other users' messages. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">EmbedLinks</code>: <code class="type">bigint</code>; <span class="comment">// Links sent by users with this permission will be auto-embedded. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">AttachFiles</code>: <code class="type">bigint</code>; <span class="comment">// Allows uploading images and files. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ReadMessageHistory</code>: <code class="type">bigint</code>; <span class="comment">// Allows reading of message history. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">MentionEveryone</code>: <code class="type">bigint</code>; <span class="comment">// Allows using the `@everyone` tag to notify all users in a channel, and the `@here` tag to notify all online users in a channel. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">UseExternalEmojis</code>: <code class="type">bigint</code>; <span class="comment">// Allows using custom emojis from other servers. Applies to: Text, Voice, Stage channels</span></p>
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-    <h3>Guild-Wide Permissions</h3>
-    <p><code class="keyword">readonly</code> <code class="property">KickMembers</code>: <code class="type">bigint</code>; <span class="comment">// Allows kicking members.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">BanMembers</code>: <code class="type">bigint</code>; <span class="comment">// Allows banning members.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">Administrator</code>: <code class="type">bigint</code>; <span class="comment">// Allows all permissions and bypasses channel permission overwrites.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageGuild</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of the guild.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ViewAuditLog</code>: <code class="type">bigint</code>; <span class="comment">// Allows viewing of audit logs.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">PrioritySpeaker</code>: <code class="type">bigint</code>; <span class="comment">// Allows using priority speaker in a voice channel. Applies to: Voice channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ViewGuildInsights</code>: <code class="type">bigint</code>; <span class="comment">// Allows viewing guild insights.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageRoles</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of roles. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageWebhooks</code>: <code class="type">bigint</code>; <span class="comment">// Allows management and editing of webhooks. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageGuildExpressions</code>: <code class="type">bigint</code>; <span class="comment">// Allows editing and deleting emojis, stickers, and soundboard sounds created by all users.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">UseApplicationCommands</code>: <code class="type">bigint</code>; <span class="comment">// Allows using application commands, including slash commands and context menu commands. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageEvents</code>: <code class="type">bigint</code>; <span class="comment">// Allows editing and deleting scheduled events created by all users. Applies to: Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ManageThreads</code>: <code class="type">bigint</code>; <span class="comment">// Allows deleting and archiving threads, and viewing all private threads. Applies to: Text channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">CreatePublicThreads</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating public and announcement threads. Applies to: Text channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">CreatePrivateThreads</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating private threads. Applies to: Text channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ModerateMembers</code>: <code class="type">bigint</code>; <span class="comment">// Allows timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">ViewCreatorMonetizationAnalytics</code>: <code class="type">bigint</code>; <span class="comment">// Allows viewing role subscription insights.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">UseSoundboard</code>: <code class="type">bigint</code>; <span class="comment">// Allows using soundboard in a voice channel. Applies to: Voice channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">CreateGuildExpressions</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating emojis, stickers, and soundboard sounds, and editing and deleting those created by the current user.</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">CreateEvents</code>: <code class="type">bigint</code>; <span class="comment">// Allows creating scheduled events, and editing and deleting those created by the current user. Applies to: Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">UseExternalSounds</code>: <code class="type">bigint</code>; <span class="comment">// Allows using custom soundboard sounds from other servers. Applies to: Voice channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">SendVoiceMessages</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending voice messages. Applies to: Text, Voice, Stage channels</span></p>
-    <p><code class="keyword">readonly</code> <code class="property">SendPolls</code>: <code class="type">bigint</code>; <span class="comment">// Allows sending polls. Applies to: Text, Voice, Stage channels</span></p>
+const required = new PermissionsBitField([
+  PermissionsBitField.Flags.ManageGuild,
+  PermissionsBitField.Flags.ManageRoles,
+]);
 
-    <h2>Rate Limits</h2>
-    <p>Discord enforces rate limits to prevent abuse of the API. If you exceed a rate limit, you will receive a response containing the following information:</p>
-    <p><code class="keyword">interface</code> <code class="type">RESTRateLimit</code> {<br>
-        &emsp;<code class="property">code?:</code> <code class="type">number</code>;<br>
-        &emsp;<code class="property">global:</code> <code class="type">boolean</code>;<br>
-        &emsp;<code class="property">message:</code> <code class="type">string</code>;<br>
-        &emsp;<code class="property">retry_after:</code> <code class="type">number</code>;<br>
-    }</p>
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
 
-    <h2>Error Handling</h2>
-    <p>When an error occurs, the API returns a JSON response containing details about the error. The structure of this response is as follows:</p>
-    <p><code class="keyword">interface</code> <code class="type">RESTError</code> {<br>
-        &emsp;<code class="property">code:</code> <code class="type">number</code>;<br>
-        &emsp;<code class="property">message:</code> <code class="type">string</code>;<br>
-        &emsp;<code class="property">errors?:</code> <code class="type">RESTErrorData</code>;<br>
-    }</p>
+  if (!interaction.memberPermissions?.has(required)) {
+    return interaction.reply({
+      content: 'You need Manage Guild + Manage Roles for this command.',
+      ephemeral: true,
+    });
+  }
+
+  // command logic...
+});
+
+await client.login(process.env.BOT_TOKEN);</code></pre>
+        </section>
+
+        <section class="reference">
+            <h2>Permission flags reference</h2>
+            <p class="muted">Grouped selection of the flags bots request most often. Combine them with role and channel
+                overwrites, and reference the developer docs for the exhaustive matrix.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flag</th>
+                            <th>Description</th>
+                            <th>Scope</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="group-row">
+                            <th colspan="3">Guild administration</th>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>Administrator</code></td>
+                            <td data-label="Description">Bypasses all channel overwrites. Reserve for internal or
+                                extremely trusted integrations.</td>
+                            <td data-label="Scope">Guild-wide</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageGuild</code></td>
+                            <td data-label="Description">Edit server configuration, community settings, and AutoMod
+                                rules.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageRoles</code></td>
+                            <td data-label="Description">Create, reorder, and edit roles along with their permissions.
+                            </td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageChannels</code></td>
+                            <td data-label="Description">Create/delete channels and update channel-specific overrides.
+                            </td>
+                            <td data-label="Scope">Text / Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageGuildExpressions</code></td>
+                            <td data-label="Description">Manage emoji, stickers, and soundboard audio. Replaces the
+                                legacy emoji/sticker flag.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageEvents</code></td>
+                            <td data-label="Description">Create, edit, and cancel scheduled events including Stage
+                                sessions.</td>
+                            <td data-label="Scope">Guild / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageWebhooks</code></td>
+                            <td data-label="Description">Create, edit, and remove webhooks across channels.</td>
+                            <td data-label="Scope">Text / Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ViewAuditLog</code></td>
+                            <td data-label="Description">Read the server audit log for compliance tooling and debugging
+                                what changed.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ViewGuildInsights</code></td>
+                            <td data-label="Description">Access community insight dashboards for growth analytics.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ViewCreatorMonetizationAnalytics</code></td>
+                            <td data-label="Description">See revenue analytics for monetized communities.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+
+                        <tr class="group-row">
+                            <th colspan="3">Moderation &amp; safety</th>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>KickMembers</code></td>
+                            <td data-label="Description">Remove members from the guild without banning.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>BanMembers</code></td>
+                            <td data-label="Description">Ban and unban members, optionally pruning recent messages.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ModerateMembers</code></td>
+                            <td data-label="Description">Timeout members for up to 28 days.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageNicknames</code></td>
+                            <td data-label="Description">Change other members' nicknames.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ChangeNickname</code></td>
+                            <td data-label="Description">Allow members (or your bot) to alter their own nickname.</td>
+                            <td data-label="Scope">Guild</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageThreads</code></td>
+                            <td data-label="Description">Archive, unarchive, delete, and edit all threads in a channel.
+                            </td>
+                            <td data-label="Scope">Text</td>
+                        </tr>
+
+                        <tr class="group-row">
+                            <th colspan="3">Messaging &amp; threads</th>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ViewChannel</code></td>
+                            <td data-label="Description">Read text channels, browse forums, and join voice channels.
+                            </td>
+                            <td data-label="Scope">Text / Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>SendMessages</code></td>
+                            <td data-label="Description">Post in channels and create forum posts.</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>SendMessagesInThreads</code></td>
+                            <td data-label="Description">Reply within existing public or private threads.</td>
+                            <td data-label="Scope">Text</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ManageMessages</code></td>
+                            <td data-label="Description">Delete messages from others and pin/unpin messages.</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>MentionEveryone</code></td>
+                            <td data-label="Description">Use <code>@everyone</code>, <code>@here</code>, and role
+                                mentions.</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>ReadMessageHistory</code></td>
+                            <td data-label="Description">Access messages sent before the member joined the channel.</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>AddReactions</code></td>
+                            <td data-label="Description">React to messages and participate in emoji-based workflows.
+                            </td>
+                            <td data-label="Scope">Text / Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>EmbedLinks</code></td>
+                            <td data-label="Description">Send rich embeds (Discord will expand supported URLs).</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>AttachFiles</code></td>
+                            <td data-label="Description">Upload files and images.</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>CreatePublicThreads</code></td>
+                            <td data-label="Description">Spin up public threads inside existing channels.</td>
+                            <td data-label="Scope">Text</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>CreatePrivateThreads</code></td>
+                            <td data-label="Description">Open invite-only threads for focused collaboration.</td>
+                            <td data-label="Scope">Text</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseExternalEmojis</code></td>
+                            <td data-label="Description">React or send emoji from other servers the member can see.</td>
+                            <td data-label="Scope">Text / Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseExternalStickers</code></td>
+                            <td data-label="Description">Send stickers from external communities.</td>
+                            <td data-label="Scope">Text</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseApplicationCommands</code></td>
+                            <td data-label="Description">Run slash commands, context menus, and other application
+                                commands.</td>
+                            <td data-label="Scope">Text / Stage</td>
+                        </tr>
+
+                        <tr class="group-row">
+                            <th colspan="3">Voice, stage, &amp; activities</th>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>Connect</code></td>
+                            <td data-label="Description">Join voice or stage channels.</td>
+                            <td data-label="Scope">Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>Speak</code></td>
+                            <td data-label="Description">Transmit audio in voice channels.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>Stream</code></td>
+                            <td data-label="Description">Go live or share screen inside voice channels.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>PrioritySpeaker</code></td>
+                            <td data-label="Description">Gain priority speaker status in voice channels.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseVAD</code></td>
+                            <td data-label="Description">Use voice activity detection instead of push-to-talk.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>MuteMembers</code></td>
+                            <td data-label="Description">Server mute other users.</td>
+                            <td data-label="Scope">Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>DeafenMembers</code></td>
+                            <td data-label="Description">Server deafen users (stop incoming audio).</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>MoveMembers</code></td>
+                            <td data-label="Description">Move members between voice or stage channels.</td>
+                            <td data-label="Scope">Voice / Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>RequestToSpeak</code></td>
+                            <td data-label="Description">Request the stage moderator to allow speaking.</td>
+                            <td data-label="Scope">Stage</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseEmbeddedActivities</code></td>
+                            <td data-label="Description">Start voice activities (YouTube, games, whiteboards) in a
+                                channel.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseSoundboard</code></td>
+                            <td data-label="Description">Play soundboard clips, including community-created ones.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>UseExternalSounds</code></td>
+                            <td data-label="Description">Use soundboard clips uploaded to other guilds.</td>
+                            <td data-label="Scope">Voice</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Flag"><code>SendVoiceMessages</code></td>
+                            <td data-label="Description">Send voice messages in text channels.</td>
+                            <td data-label="Scope">Text</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer>
+            <p>Need the full matrix or audit log codes? Head to the <a
+                    href="https://discord.com/developers/docs/topics/permissions" target="_blank"
+                    rel="noopener noreferrer">Discord Developer Portal</a>. For library specifics, see the <a
+                    href="https://discord.js.org/#/docs/discord.js/main/class/PermissionsBitField" target="_blank"
+                    rel="noopener noreferrer">discord.js documentation</a>.</p>
+        </footer>
+    </main>
 </body>
 
 </html>
